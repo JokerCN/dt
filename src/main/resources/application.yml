@@ -1,0 +1,8 @@
+
+# DataSource Config
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/nacos-test-metrics?characterEncoding=utf8&useSSL=true
+    username: nacos-test
+    password: 34PzNawBHfcr6bJhq6jj
