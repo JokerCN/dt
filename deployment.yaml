@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nacos-test-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nacos-test
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nacos-test
+    spec:
+      containers:
+        - name: nacos-test
+          image: harbor.cicconline.com/paas/nacos-test:0.0.1-snapshot
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_HOST
+              value: "192.168.1.199"
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_USERNAME
+              value: "nacos-test"
+            - name: MYSQL_PASSWORD
+              value: "34PzNawBHfcr6bJhq6jj"
+#      imagePullSecrets:
+#        - name: harbor-cicc
