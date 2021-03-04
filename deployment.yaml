@@ -26,5 +26,5 @@ spec:
               value: "nacos-test"
             - name: MYSQL_PASSWORD
               value: "34PzNawBHfcr6bJhq6jj"
-      imagePullSecrets:
-        - name: harbor-cicc
+#      imagePullSecrets:
+#        - name: harbor-cicc
