@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: nacos-test
+  # DataSource Config
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/nacos-test-metrics?characterEncoding=utf8&useSSL=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
