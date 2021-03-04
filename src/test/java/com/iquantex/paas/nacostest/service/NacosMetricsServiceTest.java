@@ -1,6 +1,8 @@
 package com.iquantex.paas.nacostest.service;
 
+import com.iquantex.paas.nacostest.dao.mapper.ListInstanceMetricMapper;
 import com.iquantex.paas.nacostest.dao.mapper.RegisterInstanceMetricMapper;
+import com.iquantex.paas.nacostest.data.ListInstanceMetricData;
 import com.iquantex.paas.nacostest.data.RegisterInstanceMetricData;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
@@ -27,8 +29,35 @@ public class NacosMetricsServiceTest {
     @MockBean
     RegisterInstanceMetricMapper registerInstanceMetricMapper;
 
+    @MockBean
+    ListInstanceMetricMapper listInstanceMetricMapper;
+
     @Autowired
     NacosMetricsService nacosMetricsService;
+
+    @Test
+    public void listListInstanceMetricsTest() {
+        log.info("> listListInstanceMetricsTest");
+        var mockData = ListInstanceMetricData.mockData(10, Function.identity());
+        given(listInstanceMetricMapper.listListInstanceMetrics(any(), any(), any()))
+                .willReturn(mockData);
+
+        var results = nacosMetricsService.listListInstanceMetrics(1L, 1L, 1L);
+        verify(listInstanceMetricMapper).listListInstanceMetrics(any(), any(), any());
+        Assert.assertEquals(10, results.size());
+    }
+
+    @Test
+    public void batchInsertListInstanceMetricsTest() {
+        log.info("> batchInsertListInstanceMetrics");
+        given(listInstanceMetricMapper.insertBatchListInstanceMetrics(any()))
+                .willReturn(10);
+
+        Integer result = nacosMetricsService.batchInsertListInstanceMetrics(ListInstanceMetricData.mockData(10, Function.identity()));
+
+        verify(listInstanceMetricMapper).insertBatchListInstanceMetrics(any());
+        Assert.assertEquals(10, (int) result);
+    }
 
     @Configuration
     @Import(NacosMetricsService.class)
@@ -37,8 +66,8 @@ public class NacosMetricsServiceTest {
     }
 
     @Test
-    public void listRegisterInstanceMetrics() {
-        log.info("> listRegisterInstanceMetrics");
+    public void listRegisterInstanceMetricsTest() {
+        log.info("> listRegisterInstanceMetricsTest");
         given(registerInstanceMetricMapper.listRegisterInstanceMetrics(anyLong(), any(), any()))
                 .willReturn(RegisterInstanceMetricData.mockData(10, Function.identity()));
 

@@ -1,8 +1,11 @@
 package com.iquantex.paas.nacostest.controller;
 
+import com.iquantex.paas.nacostest.dao.entity.ListInstanceMetric;
+import com.iquantex.paas.nacostest.dao.entity.RegisterInstanceMetric;
 import com.iquantex.paas.nacostest.data.ListInstanceMetricData;
 import com.iquantex.paas.nacostest.data.RegisterInstanceMetricData;
 import com.iquantex.paas.nacostest.service.NacosMetricsService;
+import com.iquantex.paas.nacostest.utils.SerializeUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -17,7 +20,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -156,5 +162,67 @@ public class NacosMetricsControllerTest {
                 .andExpect(ResultMatcher.matchAll(
                         status().is4xxClientError()
                 ));
+    }
+
+    @Test
+    @SneakyThrows
+    public void batchInsertRegisterInstanceMetricEntry() {
+        given(nacosMetricsService.batchInsertRegisterInstanceMetrics(any())).willReturn(10);
+
+        List<RegisterInstanceMetric> metrics = RegisterInstanceMetricData.mockData(10, Function.identity());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/nacos/batch_insert_register_instance_metrics")
+                        .content(SerializeUtils.toJson(metrics))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(ResultMatcher.matchAll(
+                        status().isOk()
+                ));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/nacos/batch_insert_register_instance_metrics")
+                        .content("[]")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(ResultMatcher.matchAll(
+                        status().isOk(),
+                        jsonPath("$.data").value(0)
+                ));
+    }
+
+    @Test
+    @SneakyThrows
+    public void batchInsertListInstanceMetricEntry() {
+        given(nacosMetricsService.batchInsertListInstanceMetrics(any())).willReturn(20);
+
+        List<ListInstanceMetric> metrics = ListInstanceMetricData.mockData(20, Function.identity());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/nacos/batch_insert_list_instance_metrics")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(SerializeUtils.toJson(metrics)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(ResultMatcher.matchAll(
+                        status().isOk(),
+                        jsonPath("$.data").value(20)
+                ));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/nacos/batch_insert_list_instance_metrics")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("[]"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(ResultMatcher.matchAll(
+                        status().isOk(),
+                        jsonPath("$.data").value(0)
+                ));
+
     }
 }

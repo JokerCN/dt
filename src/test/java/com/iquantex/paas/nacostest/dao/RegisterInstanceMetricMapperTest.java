@@ -8,7 +8,9 @@ import io.vavr.collection.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 @RunWith(SpringRunner.class)
@@ -93,7 +97,7 @@ public class RegisterInstanceMetricMapperTest {
 
         testTruncate();
         // insertion
-        insertRecordsForListRegisterInstanceMetrics(testNo, startTime, endTime);
+        List<RegisterInstanceMetric> sources = insertRecordsForListRegisterInstanceMetrics(testNo, startTime, endTime);
 
         // query records having been inserted
         List<RegisterInstanceMetric> metrics = mapper.listRegisterInstanceMetrics(testNo, startTime, endTime);
@@ -104,10 +108,11 @@ public class RegisterInstanceMetricMapperTest {
                     && Objects.equals(metric.getTestNo(), testNo);
         };
         Assert.assertTrue(metrics.stream().allMatch(predicate));
+
         testTruncate();
     }
 
-    private void insertRecordsForListRegisterInstanceMetrics(Long testNo, Date startTime, Date endTime){
+    private List<RegisterInstanceMetric> insertRecordsForListRegisterInstanceMetrics(Long testNo, Date startTime, Date endTime){
         log.info("> mock startTime and endTime");
         MockConfig mockConfig = new MockConfig()
                 .subConfig("startTime", "endTime")
@@ -121,6 +126,7 @@ public class RegisterInstanceMetricMapperTest {
             return metric;
         }).toJavaList();
         mapper.insertBatchRegisterInstanceMetrics(metrics);
+        return metrics;
     }
 
 }

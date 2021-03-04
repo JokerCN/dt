@@ -22,13 +22,13 @@ public interface RegisterInstanceMetricMapper extends BaseMapper<RegisterInstanc
 
     @Insert("<script> " +
             "insert into " + TABLE_NAME +
-            "  (`test_no`, `client_id`, `sequence`, `request`, `response`, `latency`, `start_time`, `end_time`) values " +
+            "  (`test_no`, `client_id`, `sequence`, `request`, `response`, `latency`, `start_time`, `end_time`, `success`) values " +
             "      <foreach item='item' collection='list' separator=','> " +
-            "        (#{item.testNo}, #{item.clientId}, #{item.sequence}, #{item.request}, #{item.response}, #{item.latency}, #{item.startTime}, #{item.endTime}) " +
+            "        (#{item.testNo}, #{item.clientId}, #{item.sequence}, #{item.request}, #{item.response}, #{item.latency}, #{item.startTime}, #{item.endTime}, #{item.success}) " +
             "      </foreach> " +
             "</script> ")
     @Transactional
-    void insertBatchRegisterInstanceMetrics(Collection<RegisterInstanceMetric> set);
+    Integer insertBatchRegisterInstanceMetrics(Collection<RegisterInstanceMetric> set);
 
 
     @Update("truncate table " + TABLE_NAME)
