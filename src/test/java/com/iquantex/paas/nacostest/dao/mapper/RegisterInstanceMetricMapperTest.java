@@ -1,4 +1,4 @@
-package com.iquantex.paas.nacostest.dao;
+package com.iquantex.paas.nacostest.dao.mapper;
 
 import com.github.jsonzou.jmockdata.JMockData;
 import com.github.jsonzou.jmockdata.MockConfig;
