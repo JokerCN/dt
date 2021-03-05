@@ -138,3 +138,9 @@ configmap:
     - "nginx2.conf"
   # 定义挂载配置到容器中的路径，当前仅支持一个路径，即使有多份配置文件，也只能都挂载在这个自定义路径下。
   mountPath: "/etc/nginx/conf.d"
+
+
+global:
+  mode: cluster
+  storageClass:
+    provisioner:

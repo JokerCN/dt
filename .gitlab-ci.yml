@@ -41,5 +41,7 @@ deploy_to_k8s:
     - cat ${CICC_DEV_CONFIG} > cicc-dev-config.yml
   script:
     - helm upgrade nacos-test nacos-test -n paas-dev --install --kubeconfig=cicc-dev-config.yml
+  only:
+    - master
   tags:
     - dev
