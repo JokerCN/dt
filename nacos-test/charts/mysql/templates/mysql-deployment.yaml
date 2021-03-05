@@ -23,7 +23,7 @@ spec:
           image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
           imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
           ports:
-            - name: nacos-test-mysql
+            - name: nacos-tmysql
               containerPort: 3306
               protocol: TCP
           volumeMounts:
