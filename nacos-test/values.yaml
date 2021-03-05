@@ -7,7 +7,7 @@ fullnameOverride: "nacos-test"
 groups: "nacos"
 
 # 应用容器提供服务的端口.
-containerPort: 80
+containerPort: 8080
 
 # 其他附加标签,格式是key-value形式.
 extraLable:
@@ -83,7 +83,7 @@ service:
   # k8s 运行的容器使用的是集群内的私有IP地址，会随机变化的，无法直接使用IP访问。除非有特殊需求，需要从集群外以IP+端口方式单独访问该应用进行调试.
   # 可选类型有: ClusterIP , NodePort 两种, 使用NodePort方式的话，会让k8s在所有集群节点上打开一个指定的端口，通过任意一个集群节点的IP加上指定的端口就可以访问到应用。
   # NodePort 方式一般仅用于开发环境调试，生产环境不推荐使用.
-  type: NodePort
+  type: ClusterIP
   # 服务发现端口，不能更改，在集群内部可以通过http://应用部署名字 直接访问，例如部署的服务是 my-service, 则其他服务调用该服务时可以用服务发现的名字http://my-service 访问.
   port: 8080
   # 如果使用NodePort方式，需要指定一个端口，范围在30000-32767之间，注意：此端口是全集群唯一，因此要注意不能使用已经存在的端口，即使是同一个应用需要部署在多个不同命名空间，也需要单独指定不同端口，否则会冲突.
@@ -91,13 +91,13 @@ service:
 
 # 负载均衡路由配置, 如需配置，开启enabled参数为true, host 为域名，paths 为路由uri, 例如: qtw部署后需要通过avatar-dev.iquantex.com/qtw访问，则host为 avatar-dev.iquantex.com,  paths为 /apps
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
   hosts:
-    - host: nacos-test.iquantex.com
+    - host: nacos-test.dev.cicconline.com
       paths:
-        - /nacos-test
+        - /
 
 # 资源限定，limits表示容器最高只能使用的资源，不能超过这个值, requests表示容器在启动前要求至少多少资源才能启动，如果一个节点可用资源低于此值，容器将无法被调度启动.
 # 推荐设置: 请求资源尽量控制在满足应用的基本请求即可，单个应用最大使用内存不应该超过4G内存. 1个CPU=1000m, 因此除非是CPU密集计算型应用，否则不应该超过1个CPU, 通常应用最大为500m~800m即可.
