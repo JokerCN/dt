@@ -32,7 +32,7 @@ replicaCount: 2
 
 # 应用的镜像信息，注意：这里是实际的应用镜像名字，不是dockerfile中的基础镜像.
 image:
-  repository: harbor.cicconline.com/paas/nacos-test
+  repository: harbor.cicconline.com/paas/nacos/nacos-test
   # 镜像拉取策略有3种: Always, Never, IfNotPresent , IfNotPresent 为当镜像存在于k8s节点时不拉取， Always 为一直拉取，不管本地是否存在,始终重新拉. 
   pullPolicy: IfNotPresent
   # 镜像tag号
