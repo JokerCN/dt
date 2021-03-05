@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nacos-test.fullname" . }}
+  labels:
+    {{- include "nacos-test.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.containerPort }}
+      protocol: TCP
+      name: default
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: {{ .Values.service.nodeport }}
+      {{- end }}
+  selector:
+    {{- include "nacos-test.selectorLabels" . | nindent 4 }}
