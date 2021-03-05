@@ -7,7 +7,7 @@ fullnameOverride: "nacos-test"
 groups: "nacos"
 
 # 应用容器提供服务的端口.
-containerPort: 80
+containerPort: 8080
 
 # 其他附加标签,格式是key-value形式.
 extraLable:
