@@ -1,0 +1,146 @@
+nameOverride: ""
+
+# 应用名称.
+fullnameOverride: "nacos-test"
+
+# gitlab中代码仓库工程组名字
+groups: "paas/nacos"
+
+# 应用容器提供服务的端口.
+containerPort: 80
+
+# 其他附加标签,格式是key-value形式.
+extraLable:
+  # 此logtype 标签是用于elk进行日志采集的标示，如果是java应用，则填java, 如果是前端应用，一般是使用nginx.
+  logtype: "java"
+
+# 环境变量配置, 键值对需要全部用双引号括起来.
+envVars:
+  - name: "TZ"
+    value: "Asia/Shanghai"
+  - name: MYSQL_HOST
+    value: "nacos-test-mysql"
+  - name: MYSQL_PORT
+    value: "3306"
+  - name: MYSQL_USERNAME
+    value: "nacos-test"
+  - name: MYSQL_PASSWORD
+    value: "34PzNawBHfcr6bJhq6jj"
+
+# 启动容器副本数，默认是1，如果支持多实例部署，可以更改此数值.
+replicaCount: 2
+
+# 应用的镜像信息，注意：这里是实际的应用镜像名字，不是dockerfile中的基础镜像.
+image:
+  repository: harbor.cicconline.com/paas/nacos-test
+  # 镜像拉取策略有3种: Always, Never, IfNotPresent , IfNotPresent 为当镜像存在于k8s节点时不拉取， Always 为一直拉取，不管本地是否存在,始终重新拉. 
+  pullPolicy: IfNotPresent
+  # 镜像tag号
+  tag: "master"
+
+# 拉取时需要的密码配置，当前无需配置.
+imagePullSecrets: []
+
+# RBAC 权限设定，一般无需配置，默认即可.
+## For RBAC support:
+rbac:
+  create: false
+  ## Define specific rbac permissions.
+  # resources: ["pods", "pods/exec", "secrets"]
+  # verbs: ["get", "list", "watch", "create", "patch", "delete"]
+
+  ## cluster-wide or only within namespace
+  clusterWideAccess: false
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# 提交信息，默认留空，通过CI指定参数.
+podAnnotations:
+  commitUser: ""
+
+# 当前无需配置.
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# 容器权限相关，当前无需配置.
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# 服务发现配置，一般无需配置，默认即可. (如有特殊需求看下面注释.)
+service:
+  # k8s 运行的容器使用的是集群内的私有IP地址，会随机变化的，无法直接使用IP访问。除非有特殊需求，需要从集群外以IP+端口方式单独访问该应用进行调试.
+  # 可选类型有: ClusterIP , NodePort 两种, 使用NodePort方式的话，会让k8s在所有集群节点上打开一个指定的端口，通过任意一个集群节点的IP加上指定的端口就可以访问到应用。
+  # NodePort 方式一般仅用于开发环境调试，生产环境不推荐使用.
+  type: NodePort
+  # 服务发现端口，不能更改，在集群内部可以通过http://应用部署名字 直接访问，例如部署的服务是 my-service, 则其他服务调用该服务时可以用服务发现的名字http://my-service 访问.
+  port: 8080
+  # 如果使用NodePort方式，需要指定一个端口，范围在30000-32767之间，注意：此端口是全集群唯一，因此要注意不能使用已经存在的端口，即使是同一个应用需要部署在多个不同命名空间，也需要单独指定不同端口，否则会冲突.
+  nodeport: 30050
+
+# 负载均衡路由配置, 如需配置，开启enabled参数为true, host 为域名，paths 为路由uri, 例如: qtw部署后需要通过avatar-dev.iquantex.com/qtw访问，则host为 avatar-dev.iquantex.com,  paths为 /apps
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: nacos-test.iquantex.com
+      paths:
+        - /nacos-test
+
+# 资源限定，limits表示容器最高只能使用的资源，不能超过这个值, requests表示容器在启动前要求至少多少资源才能启动，如果一个节点可用资源低于此值，容器将无法被调度启动.
+# 推荐设置: 请求资源尽量控制在满足应用的基本请求即可，单个应用最大使用内存不应该超过4G内存. 1个CPU=1000m, 因此除非是CPU密集计算型应用，否则不应该超过1个CPU, 通常应用最大为500m~800m即可.
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# 自动扩容配置，需要应用支持无状态，多实例部署才可以打开。目前无需打开.
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# 节点选择器,当前无需配置.
+nodeSelector: {}
+
+# 污点容忍,当前无需配置.
+tolerations: []
+
+# 容器亲和性,当前无需配置.
+affinity: {}
+
+# 应用配置文件, 支持在容器启动时挂载指定的配置文件到容器中.
+configmap:
+  # 是否开启挂载配置文件功能。true为开启，false为关闭，默认是false。
+  enabled: false
+  # 将配置文件放入到 devops/你的工程/config目录下，在添加需要加载的配置文件，只支持挂载文件到一个路径下。
+  # 在以下例子中表示将config目录下的2个配置文件都挂载到 /etc/nginx/conf.d 下面。 
+  # 注意：虽然支持多文件挂载，但是仅挂载需要的文件，不需要的文件不要添加到下面的列表中，例如有多份配置文件prod.conf, dev.conf,则可以都放置到config文件夹中，但在下面配置中根据不同环境，使用不同的配置文件.
+  configFile:
+    - "nginx1.conf"
+    - "nginx2.conf"
+  # 定义挂载配置到容器中的路径，当前仅支持一个路径，即使有多份配置文件，也只能都挂载在这个自定义路径下。
+  mountPath: "/etc/nginx/conf.d"
+
+
+global:
+  mode: cluster
+  storageClass:
+    provisioner:

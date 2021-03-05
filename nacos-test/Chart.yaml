@@ -1,0 +1,12 @@
+apiVersion: v2
+name: nacos-test
+description: A Helm chart for Kubernetes
+icon: https://www.iquantex.com/img/back/quantex-logo.png
+
+maintainers:
+- email: shengquan.bu@iquantex.com
+  name: YoungMan
+
+type: application
+version: 0.1.0
+appVersion: 1.16.0

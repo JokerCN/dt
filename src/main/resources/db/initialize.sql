@@ -1,6 +1,6 @@
 USE `nacos-test-metrics`;
 
-DROP TABLE `register_instance_metric`;
+DROP TABLE IF EXISTS `register_instance_metric`;
 
 CREATE TABLE IF NOT EXISTS `register_instance_metric`(
     `id` BIGINT UNSIGNED AUTO_INCREMENT,

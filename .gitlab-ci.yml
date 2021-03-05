@@ -1,0 +1,47 @@
+stages:
+  - test   # 单元测试
+  - build  # 构建镜像
+  - deploy # 集群部署
+
+code_unit_test:
+  stage: test
+  image: harbor.cicconline.com/base/maven:3.6.3-jdk8-helm3
+  script:
+    - mvn test -Dtest='!com.iquantex.paas.nacostest.dao.*Test*','!com.iquantex.paas.nacostest.dao.mapper.*Test*'
+  only:
+    - master
+    - /^feat-*/
+  tags:
+    - dev
+
+build_package_with_image:
+  stage: build
+  image: harbor.cicconline.com/base/maven:3.6.3-jdk8-helm3
+  before_script:
+    - docker login  -u 'robot$deploy' -p ${CI_USER_PASSWORD} ${CI_REGISTRY}
+  script:
+    - docker pull ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME} || true
+    - mvn clean package -Dmaven.test.skip=true
+    - docker build --cache-from ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME} -t ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME} .
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME}
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  only:
+    - master
+  tags:
+    - dev
+
+deploy_to_k8s:
+  stage: deploy
+  image: harbor.cicconline.com/base/kube-deploy:beta
+  variables:
+    TZ: "Asia/Shanghai"
+    SERVER_PORT: 80
+  before_script:
+    - cat ${CICC_DEV_CONFIG} > cicc-dev-config.yml
+  script:
+    - helm upgrade nacos-test nacos-test -n paas-dev --install --kubeconfig=cicc-dev-config.yml
+  only:
+    - master
+  tags:
+    - dev
