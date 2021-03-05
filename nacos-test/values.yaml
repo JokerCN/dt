@@ -4,7 +4,7 @@ nameOverride: ""
 fullnameOverride: "nacos-test"
 
 # gitlab中代码仓库工程组名字
-groups: "paas/nacos"
+groups: "nacos"
 
 # 应用容器提供服务的端口.
 containerPort: 80
