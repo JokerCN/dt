@@ -7,7 +7,7 @@ code_unit_test:
   stage: test
   image: harbor.cicconline.com/base/maven:3.6.3-jdk8-helm3
   script:
-    - mvn test
+    - mvn test -Dtest='!com.iquantex.paas.nacostest.dao.*Test*','!com.iquantex.paas.nacostest.dao.mapper.*Test*'
   only:
     - master
     - /^feat-*/
