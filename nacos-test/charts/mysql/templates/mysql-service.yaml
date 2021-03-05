@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.mysql.service.port }}
-      targetPort: nacos-test-mysql
+      targetPort: nacos-tmysql
       protocol: TCP
       name: nacos-test-mysql
   selector:
