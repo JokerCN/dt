@@ -34,7 +34,7 @@ replicaCount: 2
 image:
   repository: harbor.cicconline.com/paas/nacos/nacos-test
   # 镜像拉取策略有3种: Always, Never, IfNotPresent , IfNotPresent 为当镜像存在于k8s节点时不拉取， Always 为一直拉取，不管本地是否存在,始终重新拉. 
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # 镜像tag号
   tag: "master"
 
