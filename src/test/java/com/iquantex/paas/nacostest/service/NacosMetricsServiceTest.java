@@ -75,6 +75,6 @@ public class NacosMetricsServiceTest {
 
         verify(registerInstanceMetricMapper).listRegisterInstanceMetrics(anyLong(), any(), any());
         Assert.assertEquals(10, results.size());
-        Assert.assertTrue(results.get(0).getSequence() < results.get(1).getSequence());
+        Assert.assertTrue(results.get(0).getSequence() <= results.get(1).getSequence());
     }
 }
