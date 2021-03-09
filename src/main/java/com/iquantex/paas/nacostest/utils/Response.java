@@ -1,0 +1,20 @@
+package com.iquantex.paas.nacostest.utils;
+
+import org.springframework.http.ResponseEntity;
+
+public class Response {
+
+    private ResponseEntity<String> responseEntity;
+
+    public ResponseEntity<String> getResponseEntity() {
+        return responseEntity;
+    }
+
+    public void setResponseEntity(ResponseEntity<String> responseEntity) {
+        this.responseEntity = responseEntity;
+    }
+
+    public Response(ResponseEntity<String> responseEntity) {
+        this.responseEntity = responseEntity;
+    }
+}
