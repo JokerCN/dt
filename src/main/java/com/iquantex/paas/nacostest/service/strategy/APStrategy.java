@@ -179,5 +179,4 @@ public class APStrategy implements Strategy{
         return Objects.equals(resp.getResponseEntity().getBody(), "ok");
     }
 
-
 }
