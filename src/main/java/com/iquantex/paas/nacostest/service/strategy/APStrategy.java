@@ -55,12 +55,12 @@ public class APStrategy implements Strategy{
 
     @Override
     @SneakyThrows
-    public void run(Long testNo, Long interval) {
+    public void run(Long testNo, Long interval, String serviceName, String instanceIp, Integer instancePort) {
         log.info("> APStrategy.run: testNo={}, interval={}", testNo, interval);
         List<String> ipList = ipAddressManager.listIpAddress();
         String leader = chooseLeader(ipList);
-        Request request = makeRegisterInstanceRequest(leader);
-        List<Request> requests = makeListInstanceRequest(ipList);
+        Request request = makeRegisterInstanceRequest(leader, serviceName, instanceIp, instancePort);
+        List<Request> requests = makeListInstanceRequest(ipList, serviceName);
         List<ListInstanceMetric> listInstanceMetrics = Lists.newArrayList();
         List<RegisterInstanceMetric> registerInstanceMetrics = Lists.newArrayList();
 
@@ -75,7 +75,7 @@ public class APStrategy implements Strategy{
                                     .thenAccept((resp) -> {
                                         Date end = new Date();
                                         Long latency = TimeUtils.calLatency(start, end);
-                                        Boolean exist = testExist(resp);
+                                        Boolean exist = testExist(resp, instanceIp);
                                         listInstanceMetrics.add(new ListInstanceMetric(
                                                 1L,
                                                 testNo,
@@ -125,16 +125,16 @@ public class APStrategy implements Strategy{
             return ipList.get(0);
     }
 
-    Request makeRegisterInstanceRequest(String ip){
+    Request makeRegisterInstanceRequest(String ip, String serviceName, String instanceIp, Integer instancePort){
         log.info("> makeRegisterInstanceRequest: ip = {}", ip);
         Request request = new Request();
         request.setMethod(Request.Method.POST);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        map.add("serviceName", "test-ap-strategy");
-        map.add("ip", "200.200.200.200");
-        map.add("port", "8080");
+        map.add("serviceName", serviceName);
+        map.add("ip", instanceIp);
+        map.add("port", String.valueOf(instancePort));
         HttpEntity<MultiValueMap<String, String>> req = new HttpEntity<>(map, headers);
         request.setHttpEntity(req);
         request.setIpAddress(ip);
@@ -143,7 +143,7 @@ public class APStrategy implements Strategy{
         return request;
     }
 
-    Request makeListInstanceRequest(String ip){
+    Request makeListInstanceRequest(String ip, String serviceName){
         log.info("> makeListInstanceRequest: ip = {}", ip);
         Request request = new Request();
         request.setMethod(Request.Method.GET);
@@ -151,25 +151,27 @@ public class APStrategy implements Strategy{
         request.setIpAddress(ip);
         request.setPort(8848);
         Map<String, String> variables = Maps.newHashMap();
-        variables.put("serviceName", "test-ap-strategy");
+        variables.put("serviceName", serviceName);
         request.setVariables(variables);
         return request;
     }
 
-    List<Request> makeListInstanceRequest(List<String> ipList){
+    List<Request> makeListInstanceRequest(List<String> ipList, String serviceName){
         log.info("> makeListInstanceRequest: ipList = {}", ipList);
         return ipList.stream()
-                .map(this::makeListInstanceRequest)
+                .map(ip -> this.makeListInstanceRequest(ip, serviceName))
                 .collect(Collectors.toList());
     }
 
-    Boolean testExist(Response resp){
+    Boolean testExist(Response resp, String instanceIp){
         log.info("> testExist: resp = {}", resp);
         JsonNode jsonNode = SerializeUtils.toObj(resp.getResponseEntity().getBody());
         boolean exist = false;
         for(JsonNode host : jsonNode.path("hosts")){
-            if(Objects.equals(host.path("ip").asText(), "200.200.200.200"))
+            if(Objects.equals(host.path("ip").asText(), instanceIp)) {
                 exist = true;
+                break;
+            }
         }
         return exist;
     }

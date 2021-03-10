@@ -17,7 +17,7 @@ public class StrategyService {
         this.apStrategy = apStrategy;
     }
 
-    public void triggerStrategy(Long testNo, Long interval){
-        apStrategy.run(testNo, interval);
+    public void triggerStrategy(Long testNo, Long interval, String serviceName, String instanceIp, Integer instancePort){
+        apStrategy.run(testNo, interval, serviceName, instanceIp, instancePort);
     }
 }

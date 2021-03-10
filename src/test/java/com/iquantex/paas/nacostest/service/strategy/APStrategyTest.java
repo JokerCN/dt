@@ -46,7 +46,7 @@ public class APStrategyTest {
     @SneakyThrows
     @Ignore
     public void makeRegisterInstanceRequest() {
-        Request request = apStrategy.makeRegisterInstanceRequest("127.0.0.1");
+        Request request = apStrategy.makeRegisterInstanceRequest("127.0.0.1", "test-nacos-register", "211.211.211.211", 9090);
         Response response = requestSender.sendRequest(request).get();
         log.info("> register instance :{}", response.getResponseEntity().getBody());
     }
@@ -55,7 +55,7 @@ public class APStrategyTest {
     @SneakyThrows
     @Ignore
     public void makeListInstanceRequest() {
-        Request request = apStrategy.makeListInstanceRequest("127.0.0.1");
+        Request request = apStrategy.makeListInstanceRequest("127.0.0.1", "test-nacos-register");
         Response response = requestSender.sendRequest(request).get();
         log.info("> list instance : {}", response.getResponseEntity().getBody());
     }
@@ -64,15 +64,15 @@ public class APStrategyTest {
     public void testExist() {
         String body = "{\"hosts\":[{\"ip\":\"200.200.200.200\",\"port\":8080,\"valid\":true,\"healthy\":true,\"marked\":false,\"instanceId\":\"20.18.7.10#8080#DEFAULT#DEFAULT_GROUP@@nacos.naming.serviceName\",\"metadata\":{},\"enabled\":true,\"weight\":1.0,\"clusterName\":\"DEFAULT\",\"serviceName\":\"nacos.naming.serviceName\",\"ephemeral\":true}],\"dom\":\"nacos.naming.serviceName\",\"name\":\"DEFAULT_GROUP@@nacos.naming.serviceName\",\"cacheMillis\":3000,\"lastRefTime\":1615342792626,\"checksum\":\"0f579c87395fb94ff691d287b4d67cee\",\"useSpecifiedURL\":false,\"clusters\":\"\",\"env\":\"\",\"metadata\":{}}";
         Response response = new Response(new ResponseEntity<>(body, HttpStatus.OK));
-        Assert.assertTrue(apStrategy.testExist(response));
+        Assert.assertTrue(apStrategy.testExist(response, "200.200.200.200"));
 
         String bodyFalse = "{\"hosts\":[{\"ip\":\"200.200.200.201\",\"port\":8080,\"valid\":true,\"healthy\":true,\"marked\":false,\"instanceId\":\"20.18.7.10#8080#DEFAULT#DEFAULT_GROUP@@nacos.naming.serviceName\",\"metadata\":{},\"enabled\":true,\"weight\":1.0,\"clusterName\":\"DEFAULT\",\"serviceName\":\"nacos.naming.serviceName\",\"ephemeral\":true}],\"dom\":\"nacos.naming.serviceName\",\"name\":\"DEFAULT_GROUP@@nacos.naming.serviceName\",\"cacheMillis\":3000,\"lastRefTime\":1615342792626,\"checksum\":\"0f579c87395fb94ff691d287b4d67cee\",\"useSpecifiedURL\":false,\"clusters\":\"\",\"env\":\"\",\"metadata\":{}}";
         response.setResponseEntity(new ResponseEntity<>(bodyFalse, HttpStatus.OK));
-        Assert.assertFalse(apStrategy.testExist(response));
+        Assert.assertFalse(apStrategy.testExist(response, "200.200.200.200"));
 
         String bodyFalse2 = "{\"name\":\"DEFAULT_GROUP@@nacos.naming.serviceName1\",\"clusters\":\"\",\"cacheMillis\":3000,\"hosts\":[]}";
         response.setResponseEntity(new ResponseEntity<>(bodyFalse2, HttpStatus.OK));
-        Assert.assertFalse(apStrategy.testExist(response));
+        Assert.assertFalse(apStrategy.testExist(response, "200.200.200.200"));
     }
 
     @Configuration
@@ -87,7 +87,7 @@ public class APStrategyTest {
         given(registerInstanceMetricMapper.insertBatchRegisterInstanceMetrics(any())).willReturn(1);
         given(listInstanceMetricMapper.insertBatchListInstanceMetrics(any())).willReturn(10);
 
-        apStrategy.run(1L, 200L);
+        apStrategy.run(1L, 200L, "test-nacos-register", "200.200.200.200", 9090);
 
         verify(registerInstanceMetricMapper).insertBatchRegisterInstanceMetrics(any());
         verify(listInstanceMetricMapper).insertBatchListInstanceMetrics(any());

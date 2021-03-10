@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -31,9 +32,16 @@ public class StrategyController {
             @RequestParam Long testNo,
             @Min(10)
             @NotNull
-            @RequestParam Long interval){
+            @RequestParam Long interval,
+            @NotBlank
+            String serviceName,
+            @NotBlank
+            String instanceIp,
+            @Min(8080)
+            @NotNull
+            Integer instancePort){
         log.info("> triggerStrategy: testNo = {}, interval = {}", testNo, interval);
-        strategyService.triggerStrategy(testNo, interval);
+        strategyService.triggerStrategy(testNo, interval, serviceName, instanceIp, instancePort);
         return ResultObj.success(true);
     }
 
