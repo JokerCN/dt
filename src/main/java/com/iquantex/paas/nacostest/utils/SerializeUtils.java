@@ -2,6 +2,7 @@ package com.iquantex.paas.nacostest.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.iquantex.paas.nacostest.exceptions.NacosTestException;
 import lombok.SneakyThrows;
@@ -26,6 +27,9 @@ public class SerializeUtils {
         return new ObjectNode(objectMapper.getNodeFactory());
     }
 
+    public static ArrayNode createEmptyArrayNode(){
+        return new ArrayNode(objectMapper.getNodeFactory());
+    }
     /**
      * Json string deserialize to Jackson {@link JsonNode}.
      *
