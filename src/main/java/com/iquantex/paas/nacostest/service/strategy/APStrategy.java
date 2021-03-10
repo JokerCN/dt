@@ -1,5 +1,6 @@
 package com.iquantex.paas.nacostest.service.strategy;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.iquantex.paas.nacostest.dao.entity.ListInstanceMetric;
@@ -164,7 +165,13 @@ public class APStrategy implements Strategy{
 
     Boolean testExist(Response resp){
         log.info("> testExist: resp = {}", resp);
-        return Objects.equals(resp.getResponseEntity().getBody(), "ok");
+        JsonNode jsonNode = SerializeUtils.toObj(resp.getResponseEntity().getBody());
+        boolean exist = false;
+        for(JsonNode host : jsonNode.path("hosts")){
+            if(Objects.equals(host.path("ip").asText(), "200.200.200.200"))
+                exist = true;
+        }
+        return exist;
     }
 
     //TODO: implementation
