@@ -170,7 +170,6 @@ public class APStrategy implements Strategy{
     //TODO: implementation
     Boolean testSuccess(Response resp){
         log.info("> testSuccess: resp = {}", resp);
-        SerializeUtils.fromJson(resp.getResponseEntity().getBody(), );;
         return true;
     }
 
