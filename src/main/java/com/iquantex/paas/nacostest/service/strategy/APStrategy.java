@@ -174,10 +174,9 @@ public class APStrategy implements Strategy{
         return exist;
     }
 
-    //TODO: implementation
     Boolean testSuccess(Response resp){
         log.info("> testSuccess: resp = {}", resp);
-        return true;
+        return Objects.equals(resp.getResponseEntity().getBody(), "ok");
     }
 
 
