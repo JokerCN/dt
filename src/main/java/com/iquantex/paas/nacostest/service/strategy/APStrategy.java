@@ -24,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -161,17 +162,16 @@ public class APStrategy implements Strategy{
                 .collect(Collectors.toList());
     }
 
-    //TODO: implementation
     Boolean testExist(Response resp){
         log.info("> testExist: resp = {}", resp);
-        return true;
+        return Objects.equals(resp.getResponseEntity().getBody(), "ok");
     }
 
     //TODO: implementation
     Boolean testSuccess(Response resp){
         log.info("> testSuccess: resp = {}", resp);
+        SerializeUtils.fromJson(resp.getResponseEntity().getBody(), );;
         return true;
     }
-
 
 }
