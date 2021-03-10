@@ -41,13 +41,17 @@ public class StrategyControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/strategy/trigger_strategy")
                 .param("testNo", "1")
-                .param("interval", "100"))
+                .param("interval", "100")
+                .param("serviceName", "test-nacos-register")
+                .param("instanceIp", "210.211.232.222")
+                .param("instancePort", "9090")
+        )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(ResultMatcher.matchAll(
                         status().isOk(),
                         jsonPath("$.data").value(true)
                 ));
 
-        verify(strategyService).triggerStrategy(any(), any());
+        verify(strategyService).triggerStrategy(any(), any(), any(), any(), any());
     }
 }
