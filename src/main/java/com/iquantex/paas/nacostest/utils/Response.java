@@ -17,4 +17,11 @@ public class Response {
     public Response(ResponseEntity<String> responseEntity) {
         this.responseEntity = responseEntity;
     }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "responseEntity=" + responseEntity +
+                '}';
+    }
 }
