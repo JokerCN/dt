@@ -86,4 +86,14 @@ public class Request {
                 ? String.format("http://%s:%d%s", this.ipAddress, port, path)
                 : String.format("http://%s:%d", this.ipAddress, port);
     }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "url=" + getUrl() +
+                ", method=" + method +
+                ", httpEntity=" + httpEntity +
+                ", variables=" + variables +
+                '}';
+    }
 }
