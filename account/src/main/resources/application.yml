@@ -1,0 +1,12 @@
+server:
+  port: 10080
+
+spring:
+  application:
+    name: account-service
+  # DataSource Config
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8&useSSL=true
+    username: root
+    password: 123456

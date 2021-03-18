@@ -8,16 +8,25 @@
         <version>2.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.iquantex.paas</groupId>
-    <artifactId>nacos-test</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>nacos-test</name>
-    <description>cicc paas nacos test</description>
+    <groupId>com.iquantex.stl</groupId>
+    <artifactId>dt</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+    <name>dt</name>
+    <description>stl dt</description>
     <properties>
         <java.version>1.8</java.version>
         <mybatis.plus.boot.starter.version>3.4.2</mybatis.plus.boot.starter.version>
         <skipTests>false</skipTests>
     </properties>
+
+    <modules>
+        <module>common</module>
+        <module>account</module>
+        <module>order</module>
+        <module>product</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
